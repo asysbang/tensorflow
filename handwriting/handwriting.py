@@ -1,9 +1,15 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import tensorflow as tf
 
 from tensorflow.keras.layers import Dense, Flatten, Conv2D
 from tensorflow.keras import Model
+
+import cv2
+import scipy.misc
 
 mnist = tf.keras.datasets.mnist
 
@@ -18,6 +24,8 @@ x_test = x_test[..., tf.newaxis]
 train_ds = tf.data.Dataset.from_tensor_slices(
     (x_train, y_train)).shuffle(10000).batch(32)
 test_ds = tf.data.Dataset.from_tensor_slices((x_test, y_test)).batch(32)
+
+
 
 class MyModel(Model):
   def __init__(self):
@@ -69,7 +77,7 @@ def test_step(images, labels):
   test_accuracy(labels, predictions)
 
 
-EPOCHS = 5
+EPOCHS = 1
 
 for epoch in range(EPOCHS):
   train_loss.reset_states()
@@ -89,6 +97,26 @@ for epoch in range(EPOCHS):
                          train_accuracy.result()*100,
                          test_loss.result(),
                          test_accuracy.result()*100))
+  
+  
+img = cv2.imread('test_data/9_2.png')  # 手写数字图像所在位置
+
+img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # 转换图像为单通道(灰度图)
+
+ret, thresh_img = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY) #二值化  必须要有ret 两个参数来接受返回值
+
+re_img = cv2.resize(thresh_img, (28,28))
+
+cv2.imshow('image', re_img) #图片很小，在左上角。。。。注意仔细找
+
+re_img = re_img / 255.0
+
+scipy.misc.imsave('xx.jpg', re_img)#保存图片
+
+print(re_img.shape)
+
+cv2.waitKey(0)
+
 
 
 

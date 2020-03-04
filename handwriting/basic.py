@@ -7,6 +7,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import cv2
 
+import scipy.misc
+
 def plot_value_array(i, predictions_array, true_label):
   predictions_array, true_label = predictions_array, true_label[i]
   plt.grid(False)
@@ -22,7 +24,10 @@ def plot_value_array(i, predictions_array, true_label):
   
 #注意不要太多空白，否则缩放之后，文字信息不够大
 #注意要黑底白字，否则识别不行的  
-img = cv2.imread('test_data/5_p.png')  # 手写数字图像所在位置
+#需要二值化，切黑色是0-1的浮点数
+#识别：5  0  2  3  6
+#未识别：1->6   4->3    7->2    8->3   9->1
+img = cv2.imread('test_data/9_2.png')  # 手写数字图像所在位置
 
 img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # 转换图像为单通道(灰度图)
 
@@ -31,6 +36,10 @@ ret, thresh_img = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY) #二值化  �
 re_img = cv2.resize(thresh_img, (28,28))
 
 cv2.imshow('image', re_img) #图片很小，在左上角。。。。注意仔细找
+
+re_img = re_img / 255.0
+
+scipy.misc.imsave('xx.jpg', re_img)#保存图片
 
 print(re_img.shape)
 
@@ -66,6 +75,8 @@ model.evaluate(x_test,  y_test, verbose=2)
 
 # 将整个模型保存为HDF5文件
 model.save('my_model.h5')
+
+
 
 
 # 重新创建完全相同的模型，包括其权重和优化程序
