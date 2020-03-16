@@ -1,4 +1,4 @@
-#!/usr/bin/python
+1#!/usr/bin/python
 # -*- coding: UTF-8 -*-
 
 import tensorflow as tf
